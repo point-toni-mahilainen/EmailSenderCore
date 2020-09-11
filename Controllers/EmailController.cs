@@ -14,22 +14,25 @@ namespace EmailSenderCore.Controllers
     public class EmailController : ControllerBase
     {
         [HttpPost]
+        [Route("")]
         public ActionResult EmailSender([FromBody] Email email)
         {
             try
             {
                 MailMessage mail = new MailMessage();
-                SmtpClient client = new SmtpClient("mail.shellit.org");
+                SmtpClient client = new SmtpClient("outgoing mail server");
 
-                mail.From = new MailAddress("palaute@koskenseo.fi");
-                mail.To.Add("info@koskenseo.fi");
+                mail.From = new MailAddress("<sending email>");
+                mail.To.Add(email.RecipientEmail);
                 mail.Subject = email.Subject;
-                mail.Body = "Lähettäjä:" + "\r\n" + email.Name + "\r\n" + "\r\n" + 
-                            "Lähettäjän sähköposti:" + "\r\n" + email.EmailAddress + "\r\n" + "\r\n" + 
-                            "Viesti:" + "\r\n" + email.Message;
+                mail.Body = "This message has sent from the WebPortfolio's contact service." + "\r\n" + 
+                            "If you want to answer to the sender, please send your answer to the address shown in ''Sender's email'' -section below." + "\r\n" + "\r\n" +
+                            "Sender:" + "\r\n" + email.Name + "\r\n" + "\r\n" + 
+                            "Sender's email:" + "\r\n" + email.SenderEmail + "\r\n" + "\r\n" + 
+                            "Message:" + "\r\n" + email.Message;
 
                 client.Port = 587;
-                client.Credentials = new NetworkCredential("palaute@koskenseo.fi", "palauteSeo");
+                client.Credentials = new NetworkCredential("<sending email>", "<password>");
                 client.EnableSsl = true;
 
                 client.Send(mail);
